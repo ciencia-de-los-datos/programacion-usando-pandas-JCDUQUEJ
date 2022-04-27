@@ -13,7 +13,6 @@ tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
 tbl1 = pd.read_csv("tbl1.tsv", sep="\t")
 tbl2 = pd.read_csv("tbl2.tsv", sep="\t")
 
-
 def pregunta_01():
     """
     ¿Cuál es la cantidad de filas en la tabla `tbl0.tsv`?
@@ -22,7 +21,8 @@ def pregunta_01():
     40
 
     """
-    return
+    totalFilas = len(tbl0)
+    return totalFilas
 
 
 def pregunta_02():
@@ -33,7 +33,9 @@ def pregunta_02():
     4
 
     """
-    return
+    columnas = tbl0.shape[1]
+
+    return columnas
 
 
 def pregunta_03():
@@ -50,7 +52,8 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    listaCol1 = tbl0.groupby("_c1")["_c1"].count()
+    return listaCol1
 
 
 def pregunta_04():
@@ -65,8 +68,9 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
 
+    listaCol2 = tbl0.groupby("_c1")["_c2"].mean()
+    return listaCol2
 
 def pregunta_05():
     """
@@ -82,7 +86,8 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    listaCol3 = tbl0.groupby("_c1")["_c2"].max()
+    return listaCol3
 
 
 def pregunta_06():
@@ -94,7 +99,11 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    conjunto = list(set(tbl1["_c4"]))
+    conjunto = sorted(conjunto)
+    conjunto = [row.upper() for row in conjunto]
+
+    return conjunto
 
 
 def pregunta_07():
@@ -110,7 +119,8 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    listaCol4 = tbl0.groupby("_c1")["_c2"].sum()
+    return listaCol4
 
 
 def pregunta_08():
@@ -128,7 +138,8 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    tbl0["suma"] = tbl0["_c0"]+tbl0["_c2"]
+    return tbl0
 
 
 def pregunta_09():
@@ -146,7 +157,10 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    listYear = [row[:4] for row in tbl0["_c3"]]
+    tbl0["year"] = listYear
+    
+    return tbl0
 
 
 def pregunta_10():
@@ -163,8 +177,27 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    
+    df = tbl0.copy()
+    df['_c2'] = df['_c2'].apply(lambda x: str(x))
+    df = df.sort_values(by=['_c2'])
+    df = df.groupby(['_c1'], as_index=False).agg({'_c2': ':'.join})
 
+    #def formato(sf):
+    #    lista5 = list(sf['join'])
+    #    lista5.sort()  
+    #    return ':'.join(lista5)
+    
+    #combos = df.groupby(['_c1']).apply(formato)
+    #dfNew = df.drop_duplicates(subset = ['_c1'])
+    #dato1 = list(sorted(dfNew['_c1']))
+    #dato2 = list(combos)
+
+    #respuesta10 = pd.DataFrame(list(zip(dato1,dato2)), columns = ['_c1','_c2'])
+
+    #print(df)
+    return df
+#pregunta_10()
 
 def pregunta_11():
     """
@@ -182,7 +215,22 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    df = tbl1.copy()
+    df['join'] = df['_c4'].apply(lambda x: str(x))
+    
+    def formato(sf):
+        lista5 = list(sf['join'])
+        lista5.sort()  
+        return ','.join(lista5)
+    
+    combos = df.groupby(['_c0']).apply(formato)
+    dfNew = df.drop_duplicates(subset = ['_c0'])
+    dato1 = list(sorted(dfNew['_c0']))
+    dato2 = list(combos)
+
+    respuesta = pd.DataFrame(list(zip(dato1,dato2)), columns = ['_c0','_c4'])
+    
+    return respuesta
 
 
 def pregunta_12():
@@ -200,7 +248,25 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+
+    df = tbl2.copy()
+    df['join'] = df['_c0'].apply(lambda x: str(x))
+    df['_c5b'] = df['_c5b'].apply(lambda x: str(x))
+    df['_c5'] = df['_c5a'] + ':' + df['_c5b']
+
+    def formato(sf):
+        lista5 = list(sf['_c5'])
+        lista5.sort()  
+        return ','.join(lista5)
+    
+    combos = df.groupby(['_c0']).apply(formato)
+
+    dfNew = df.drop_duplicates(subset = ['_c0'])
+    dato1 = list(sorted(dfNew['_c0']))
+    dato2 = list(combos)
+
+    respuesta = pd.DataFrame(list(zip(dato1,dato2)), columns = ['_c0','_c5'])
+    return respuesta
 
 
 def pregunta_13():
@@ -217,4 +283,6 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    df = pd.merge(tbl0,tbl2,sort=True,on="_c0")
+    listaCol13 = df.groupby("_c1")["_c5b"].sum()
+    return listaCol13

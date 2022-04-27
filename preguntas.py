@@ -181,23 +181,10 @@ def pregunta_10():
     df = tbl0.copy()
     df['_c2'] = df['_c2'].apply(lambda x: str(x))
     df = df.sort_values(by=['_c2'])
-    df = df.groupby(['_c1'], as_index=False).agg({'_c2': ':'.join})
+    df = df.groupby(['_c1']).agg({'_c2': ':'.join})
 
-    #def formato(sf):
-    #    lista5 = list(sf['join'])
-    #    lista5.sort()  
-    #    return ':'.join(lista5)
-    
-    #combos = df.groupby(['_c1']).apply(formato)
-    #dfNew = df.drop_duplicates(subset = ['_c1'])
-    #dato1 = list(sorted(dfNew['_c1']))
-    #dato2 = list(combos)
-
-    #respuesta10 = pd.DataFrame(list(zip(dato1,dato2)), columns = ['_c1','_c2'])
-
-    #print(df)
     return df
-#pregunta_10()
+
 
 def pregunta_11():
     """
